@@ -65,6 +65,8 @@ public class StatusListCredentialController {
         var split = httpUrl.getPath().split("/");
         var credentialId = split[split.length - 1];
 
+        monitor.info("Checking credentialstatus for '" + credentialId + "'");
+
         var query = QuerySpec.Builder.newInstance()
                 .filter(new Criterion("verifiableCredential.credential.id", "=", credentialId))
                 .filter(new Criterion("metadata.published", "=", true))
@@ -74,6 +76,7 @@ public class StatusListCredentialController {
                 .orElseThrow(InvalidRequestException::new);
 
         if (statusListCredential.isEmpty()) {
+            monitor.debug("No such published credential: '" + credentialId + "'");
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         if (statusListCredential.size() > 1) {
