@@ -1,5 +1,11 @@
 import org.eclipse.edc.plugins.edcbuild.plugins.MergeOpenApiSpecTask
 
+// FIX issue " Cannot query the value of task ':extensions:sts:sts-api:openapi'
+// property 'alwaysResolveAppPath' because it has no value available"
+// To generate openapi files, run: ./gradlew openapi
+// (see also ResolveTask block at the bottom)
+import io.swagger.v3.plugins.gradle.tasks.ResolveTask
+
 /*
  *  Copyright (c) 2022 Microsoft Corporation
  *
@@ -53,4 +59,19 @@ allprojects {
 
 tasks.withType(MergeOpenApiSpecTask::class.java) {
     skipOperationExample.set(true)
+}
+
+// FIX issue " Cannot query the value of task ':extensions:sts:sts-api:openapi'
+// property 'alwaysResolveAppPath' because it has no value available"
+// To generate openapi files, run: ./gradlew openapi
+// (see also import task at the top)
+subprojects {
+    tasks.withType<ResolveTask>().configureEach {
+        alwaysResolveAppPath.convention(false)
+        skipResolveAppPath.convention(false)
+        prettyPrint.convention(true)
+        sortOutput.convention(false)
+        readAllResources.convention(false)
+        encoding.convention("UTF-8")
+    }
 }
